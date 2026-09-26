@@ -16,6 +16,7 @@
 | モデル | Flash が shadow alert・Fundamental・Red Team、Luna が調査深度と最終判断、Sol が査読。米東部日付ごとの本番呼出し試行上限はそれぞれ 8/4/2 回、開発 draft は別台帳で 20/10/5 回（503 や 429 の代替経路を含む）。Gemini API の 429 は `modelctl` の Antigravity `gemini-3.8-flash-low` へ１回切替える。入力文字数上限 32,000 |
 | 査読 | 09:05 ET 以降に L2/L3 の判断束だけを Sol に渡す。`fill_and_pnl` は入力しない。結果を見る前の工程品質を採点 |
 | 引け後 | 17:00–20:00 ET、同日の日足が取れた時点で仮想約定と P&L を一度だけ記録。欠損なら未処理として再試行。次回稼働時は飛ばした NYSE 営業日から順に補完し、後日取得値はその旨を記録 |
+| 日次監査 | 20:00–21:00 ET、run・Sol 査読・仮想口座の証拠を突き合わせ、`cycle_audit.json` に実行基盤、LLM の指示／推論、工程品質を別々に記録 |
 
 ## コマンド
 
@@ -25,6 +26,7 @@ cp .env.example .env   # 実在の SEC 連絡先に置換。公開しない
 python3 -m fund.cli research --date 2026-09-28 --draft
 python3 -m fund.cli review 2026-09-28-draft
 python3 -m fund.cli status
+python3 -m fund.cli audit --date 2026-09-28
 python3 scripts/install_scheduler.py
 ```
 
@@ -40,6 +42,6 @@ python3 scripts/install_scheduler.py
 - 確定した段階０の設定版 `cost-v3-2026-09-26` で先行 L3 `2026-09-28-draft-v4` を実行。Flash の分析、算術 DCF、Red Team、Luna の調査依頼と WATCH 判断、Risk 上限、Sol の盲検査読まで通過。査読 `gate=pass`、評点 4/5、確認済み欠陥０件。予測 FCFF への事業上の橋渡しは未解決。詳細は [初回レポート](../reports/2026-09-28-draft.md)。
 - 初回の Flash shadow alert は供給側 503 で失敗し、同一の凍結資料で再実行して成功。これは `system_runtime`。次の draft は shadow alert の引用が原文と一致せず `llm_reasoning`、その後 Gemini API の日次 quota 429 によって Red Team が `system_runtime` で失敗した。さらに試作呼出しが本番用の上限を消費して `system_budget` になったため、両台帳を分離した。別種の失敗として残し、確認済みの代替経路で再検証する。
 - launchd サービスが登録され、週末の `tick` が実際に起動して `weekend` を記録。launchd 相当の最小環境変数から `modelctl` の Flash/Luna 呼出しも成功した。次の開場前実行と引け後の日足・P&L は、時刻到来後に確認する。
-- `python3 -m unittest discover -s tests -v` の 10 件で FCFF/DCF・逆 DCF の境界、速報単位、仮想約定費用、企業行動、営業日補完、保存中断からの復旧、判断時刻を検証。
+- `python3 -m unittest discover -s tests -v` の 12 件で FCFF/DCF・逆 DCF の境界、速報単位、仮想約定費用、企業行動、営業日補完、保存中断からの復旧、判断時刻、日次の失敗分類を検証。
 
 Codex Scheduled task によるユーザー通知は、ローカルの研究実行とは別の接続作業として未設定。初回の外部査読は本書とレポートでユーザーに提示する。

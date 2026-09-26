@@ -110,6 +110,8 @@ def close_through(day):
     reports=[]
     for session in sessions:
         result=close_day(session.date().isoformat())
-        if result.get("status")!="completed": return result
+        if result.get("status")!="completed":
+            save(PRIVATE/"runs"/session.date().isoformat()/"paper_failure.json",result)
+            return result
         reports.append(result)
     return {"status":"completed","through":day,"sessions_processed":[x["day"] for x in reports],"latest":reports[-1]}

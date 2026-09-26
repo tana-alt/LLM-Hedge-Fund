@@ -10,6 +10,7 @@ import pandas_market_calendars as mcal
 from .common import PRIVATE, config, load, save, utc_now
 from .experiment import review, run_research, retry_shadow
 from .paper import close_through
+from .audit import audit_day
 
 
 def tick():
@@ -47,6 +48,8 @@ def _tick_locked():
         return review(day)
     if "17:00"<=hhmm<"20:00":
         return close_through(day)
+    if "20:00"<=hhmm<"21:00":
+        return audit_day(day)
     return {"status":"skipped","reason":"outside scheduled windows","et":now.isoformat()}
 
 
@@ -57,6 +60,7 @@ def main():
     p=sub.add_parser("review");p.add_argument("run_id");p.add_argument("--force",action="store_true")
     p=sub.add_parser("retry-shadow");p.add_argument("run_id")
     p=sub.add_parser("close");p.add_argument("--date",required=True)
+    p=sub.add_parser("audit");p.add_argument("--date",required=True)
     sub.add_parser("tick")
     sub.add_parser("status")
     args=parser.parse_args()
@@ -64,6 +68,7 @@ def main():
     elif args.command=="review":result=review(args.run_id,args.force)
     elif args.command=="retry-shadow":result=retry_shadow(args.run_id)
     elif args.command=="close":result=close_through(args.date)
+    elif args.command=="audit":result=audit_day(args.date)
     elif args.command=="tick":result=tick()
     else:
         service=subprocess.run(["launchctl","print",f"gui/{os.getuid()}/com.tana-alt.llm-hedge-fund"],text=True,capture_output=True)

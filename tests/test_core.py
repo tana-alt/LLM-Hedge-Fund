@@ -7,6 +7,7 @@ from fund.common import load, save
 from fund.valuation import build_valuation, dcf, historical_bridge, reverse_growth, release_facts
 import fund.paper as paper
 import fund.experiment as experiment
+import fund.audit as audit
 
 
 class ValuationTests(unittest.TestCase):
@@ -114,6 +115,34 @@ class TimingTests(unittest.TestCase):
             with patch.object(experiment,"PRIVATE",Path(temp)):
                 result=experiment.run_research("2020-01-02")
             self.assertEqual(result["status"],"late_not_frozen")
+
+
+class CycleAuditTests(unittest.TestCase):
+    def test_classifies_model_failure_separately_from_working_operations_loop(self):
+        with tempfile.TemporaryDirectory() as temp:
+            private=Path(temp)
+            folder=private/"runs"/"2026-09-28"
+            save(folder/"result.json",{"status":"decision_frozen","research_level":"L3","pm_decision":{"decision_id":"abc"},"stages":{"data":{"status":"passed"},"shadow_alert":{"status":"failed","failure_class":"llm_reasoning","code":"shadow_quote"}}})
+            save(folder/"fill_and_pnl.json",{"status":"completed","nav":100000})
+            save(folder/"review.json",{"status":"completed","review":{"gate":"pass","verified_defects":[]}})
+            with patch.object(audit,"PRIVATE",private):
+                result=audit.audit_day("2026-09-28")
+            self.assertTrue(result["operations_loop_ran"])
+            self.assertEqual(result["llm_failures"][0]["code"],"shadow_quote")
+            self.assertEqual(result["system_failures"],[])
+            self.assertEqual(result["status"],"failed")
+
+    def test_records_provider_and_price_failures_by_origin(self):
+        with tempfile.TemporaryDirectory() as temp:
+            private=Path(temp)
+            folder=private/"runs"/"2026-09-28"
+            save(folder/"result.json",{"status":"decision_frozen","research_level":"L3","pm_decision":{"decision_id":"abc"},"stages":{"data":{"status":"passed"}}})
+            save(folder/"review.json",{"status":"failed","failure_class":"system_runtime","code":"modelctl_exit"})
+            save(folder/"paper_failure.json",{"status":"failed","failure_class":"system_data","code":"market_bar_unavailable"})
+            with patch.object(audit,"PRIVATE",private):
+                result=audit.audit_day("2026-09-28")
+            self.assertEqual({x["code"] for x in result["system_failures"]},{"modelctl_exit","market_bar_unavailable"})
+            self.assertFalse(result["operations_loop_ran"])
 
 
 if __name__=="__main__":unittest.main()
