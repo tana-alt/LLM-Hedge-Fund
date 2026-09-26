@@ -40,3 +40,5 @@ API キー、認証情報、非公開資料、個人情報をコミットしな�
 １銘柄での運用サイクル、数値モデル、査読条件は [１銘柄から始める実験サイクルの査読](docs/cycle-peer-review.md) を参照してください。
 
 PM の分析依頼、手法の選択、Risk の権限、数値判断、評価と拡大の具体案は [Fundamental LLM チームの実験設計案](docs/experiment-design-strategy.md) にまとめています。
+
+yfinance・SEC/Costco IR の参照先、日次アナリストの追加アラート、GPT-6 Sol による外部査読と Automation の評価は [COST 実験の情報源、日次アラート、外部査読](docs/monitoring-and-source-policy.md) を参照してください。
