@@ -1,6 +1,6 @@
 # LLM Hedge Fund Group 実験計画書
 
-版: v1（レビュー用）
+版: v1.1（2026-09-26 改訂。設計基準。実装状況は [運用手順](operations.md) を参照）
 作成日: 2026-09-26
 対象: Costco Wholesale（NASDAQ: COST）１銘柄と USD 現金による仮想運用
 
@@ -115,4 +115,4 @@ PM は毎日の全面分析を命じない。L0 は新着資料・価格・期�
 
 ## 10. この計画の現在地
 
-本書は実装と仮想運用のための**集約版**である。[実務調査](fundamental-research-strategy.md)、[サイクル査読](cycle-peer-review.md)、[設計判断](experiment-design-strategy.md)、[情報源と alert の詳細](monitoring-and-source-policy.md)を根拠資料として残す。現時点でコードによる L3、仮想注文、定期 Automation は走っていない。次の作業は段階０の設定凍結と、取得・記録・計算の最小実装である。
+本書は実装と仮想運用のための**設計基準**である。[実務調査](fundamental-research-strategy.md)、[サイクル査読](cycle-peer-review.md)、[設計判断](experiment-design-strategy.md)、[情報源と alert の詳細](monitoring-and-source-policy.md)を根拠資料として残す。2026-09-26 に段階０の設定、初回の先行 L3、Sol 査読、ローカル launchd の定期起動を実装した。前向きの仮想約定は次の米国営業日から始まる。Codex Scheduled task による通知は未作成で、ローカルの研究・仮想口座スケジューラとは別である。実行状態は [運用手順](operations.md) に記録する。

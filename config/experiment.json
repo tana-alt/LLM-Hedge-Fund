@@ -1,0 +1,33 @@
+{
+  "version": "cost-v3-2026-09-26",
+  "symbol": "COST",
+  "cik": "0000909832",
+  "sec_api": [
+    "https://data.sec.gov/submissions/CIK0000909832.json",
+    "https://data.sec.gov/api/xbrl/companyfacts/CIK0000909832.json"
+  ],
+  "sec_archive_prefix": "https://www.sec.gov/Archives/edgar/data/909832/",
+  "ir_pages": [
+    "https://investor.costco.com/news/default.aspx",
+    "https://investor.costco.com/financials/annual-reports-and-proxy-statements/default.aspx",
+    "https://investor.costco.com/events-and-presentations/default.aspx"
+  ],
+  "price": {"auto_adjust": false, "actions": true, "repair": false, "interval": "1d"},
+  "et_decision_time": "09:00",
+  "et_review_time": "09:05",
+  "et_close_time": "17:00",
+  "initial_cash_usd": 100000,
+  "max_stock_weight": 0.20,
+  "max_portfolio_bear_loss": 0.02,
+  "one_way_cost_bps": 10,
+  "alerts": {"abs_close_return": 0.05, "volume_vs_20d_median": 2.0, "new_forms": ["10-K", "10-Q", "8-K", "10-K/A", "10-Q/A"]},
+  "models": {
+    "analyst": {"provider": "google", "model": "gemini-3.8-flash", "max_calls_daily": 8, "max_dev_calls_daily": 20, "fallback": {"runtime": "agy", "model": "gemini-3.8-flash-low", "on": "429"}},
+    "pm": {"provider": "openai-codex", "model": "gpt-6-luna", "max_calls_daily": 4, "max_dev_calls_daily": 10},
+    "reviewer": {"provider": "openai-codex", "model": "gpt-6-sol", "max_calls_daily": 2, "max_dev_calls_daily": 5}
+  },
+  "source_cutoff_rule": "Only documents published before 09:00 America/New_York on decision date; unknown publish time excludes source",
+  "review_criteria": ["provenance", "time_integrity", "arithmetic", "alternative_hypothesis", "risk", "decision_reason"],
+  "model_budget": {"max_input_chars_per_call": 32000, "max_output_tokens_observed": 0},
+  "paper_account": "COST plus USD cash; no shorting, leverage or live orders"
+}

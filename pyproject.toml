@@ -1,0 +1,15 @@
+[project]
+name = "llm-hedge-fund-experiment"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = ["yfinance==1.2.0", "beautifulsoup4>=4.13,<5", "certifi>=2025.1", "pandas-market-calendars>=5,<6"]
+
+[project.scripts]
+fund = "fund.cli:main"
+
+[build-system]
+requires = ["setuptools>=78"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["fund"]
