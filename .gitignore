@@ -1,0 +1,22 @@
+# Local credentials and configuration
+.env
+.env.*
+!.env.example
+secrets/
+private/
+*.pem
+*.key
+*credentials*.json
+*service-account*.json
+
+# Private inputs and generated records
+data/private/
+outputs/private/
+logs/
+*.log
+
+# Local development files
+.venv/
+__pycache__/
+*.py[cod]
+.DS_Store
